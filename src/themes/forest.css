@@ -1,0 +1,5 @@
+/* forest theme — CSS custom properties */
+[data-theme="forest"] {
+  --bg: #1a1a2e;
+  --text: #eee;
+}

@@ -1,0 +1,5 @@
+/* midnight theme — CSS custom properties */
+[data-theme="midnight"] {
+  --bg: #1a1a2e;
+  --text: #eee;
+}

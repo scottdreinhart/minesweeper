@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+.vite/
+*.log
+.DS_Store
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
