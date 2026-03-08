@@ -4,9 +4,15 @@ import { visualizer } from 'rollup-plugin-visualizer'
 import path from 'path'
 
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
-    visualizer({ filename: 'dist/stats.html', gzipSize: true }),
+    visualizer({
+      filename: 'dist/bundle-report.html',
+      gzipSize: true,
+      brotliSize: true,
+      open: false,
+    }),
   ],
   resolve: {
     alias: {
@@ -16,21 +22,27 @@ export default defineConfig({
       '@/ui': path.resolve(__dirname, 'src/ui'),
     },
   },
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    watch: { usePolling: true },
-    hmr: { host: 'localhost', port: 5173, protocol: 'ws' },
-  },
   build: {
-    outDir: 'dist',
-    sourcemap: false,
+    target: 'es2020',
+    cssTarget: 'es2020',
+    modulePreload: { polyfill: false },
+    minify: 'esbuild',
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
         },
       },
+    },
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    hmr: {
+      host: 'localhost',
+      port: 5173,
     },
   },
 })

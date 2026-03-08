@@ -1,19 +1,28 @@
 import js from '@eslint/js'
-import react from 'eslint-plugin-react'
-import reactHooks from 'eslint-plugin-react-hooks'
-import prettier from 'eslint-config-prettier'
+import tseslint from 'typescript-eslint'
+import reactPlugin from 'eslint-plugin-react'
+import reactHooksPlugin from 'eslint-plugin-react-hooks'
+import prettierConfig from 'eslint-config-prettier'
 import boundaries from 'eslint-plugin-boundaries'
 
 export default [
   js.configs.recommended,
-  prettier,
+  prettierConfig,
   {
     files: ['src/**/*.{ts,tsx}'],
-    plugins: { react, 'react-hooks': reactHooks, boundaries },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
+      boundaries,
+    },
     languageOptions: {
+      parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: { ecmaFeatures: { jsx: true } },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
     },
     settings: {
       react: { version: 'detect' },
@@ -26,8 +35,23 @@ export default [
       ],
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
+      // ── React ──
+      'react/jsx-uses-vars': 'error',
       'react/react-in-jsx-scope': 'off',
+
+      // ── Hooks ──
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      // ── General — disable base rules in favor of TypeScript-aware equivalents ──
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
+      'no-console': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+
+      // ── CLEAN Architecture Boundaries ──
       'boundaries/element-types': [
         'error',
         {
@@ -43,5 +67,7 @@ export default [
       ],
     },
   },
-  { ignores: ['dist/', 'electron/', 'android/'] },
+  {
+    ignores: ['dist/', 'node_modules/', 'electron/', 'android/'],
+  },
 ]
