@@ -122,13 +122,29 @@ pnpm preview
 ### Code Quality
 
 ```bash
-pnpm lint            # ESLint check
-pnpm lint:fix        # ESLint auto-fix
-pnpm format          # Prettier write
-pnpm format:check    # Prettier verify
-pnpm typecheck       # tsc --noEmit
-pnpm check           # lint + format:check + typecheck
-pnpm validate        # check + build (CI gate)
+# Individual checks
+pnpm lint            # ESLint — check for issues
+pnpm lint:fix       # ESLint — auto-fix issues
+pnpm format         # Prettier — format all source files
+pnpm format:check   # Prettier — check formatting without writing
+pnpm typecheck      # TypeScript type check (tsc --noEmit)
+
+# Chains
+pnpm check          # lint + format:check + typecheck in one pass (quality gate)
+pnpm fix            # lint:fix + format in one pass (auto-fix everything)
+pnpm validate       # check + build — full pre-push validation
+```
+
+### Cleanup & Maintenance
+
+```bash
+# Clean
+pnpm clean          # wipe dist/ and release/ build outputs
+pnpm clean:node     # delete node_modules only
+pnpm clean:all      # nuclear — dist/ + release/ + node_modules/
+
+# Fresh start
+pnpm reinstall      # clean:all + pnpm install
 ```
 
 ### Electron Desktop App
@@ -151,57 +167,88 @@ pnpm cap:run:android     # build + run on connected device
 
 ## Tech Stack
 
-| Layer        | Technology                                          |
-| ------------ | --------------------------------------------------- |
-| UI           | React 19 + CSS Modules (scoped styles)              |
-| Bundler      | Vite 7 (ESBuild + Rollup)                           |
-| Language     | TypeScript 5.9 (strict mode)                        |
-| Desktop      | Electron 40 + electron-builder                      |
-| Mobile       | Capacitor 8 (Android / iOS)                         |
-| Lint         | ESLint 10 (flat config) + eslint-plugin-boundaries  |
-| Format       | Prettier 3                                          |
-| Runtime      | Node.js 24, pnpm 10                                 |
-| Audio        | Web Audio API (synthesized SFX)                     |
-| Offline      | Service Worker + Cache API                          |
+| Technology | Version | Purpose |
+|---|---|---|
+| [React](https://github.com/facebook/react) | 19 | UI library (hooks, memo, lazy) |
+| [TypeScript](https://github.com/microsoft/TypeScript) | 5.9 | Static type checking (strict mode) |
+| [Vite](https://github.com/vitejs/vite) | 7 | Build tool & dev server |
+| [Electron](https://github.com/electron/electron) | 40 | Desktop app (Windows / Linux / macOS) |
+| [Capacitor](https://github.com/ionic-team/capacitor) | 8 | Native mobile / tablet apps (Android / iOS) |
+| [electron-builder](https://github.com/electron-userland/electron-builder) | 26 | Desktop packaging & installers |
+| [CSS Modules](https://github.com/css-modules/css-modules) | — | Scoped component styling |
+| [ESLint](https://github.com/eslint/eslint) | 10 | Linting (flat config, React + hooks plugins) |
+| [Prettier](https://github.com/prettier/prettier) | 3 | Code formatting |
+| [pnpm](https://github.com/pnpm/pnpm) | 10 | Fast, disk-efficient package manager |
+| [Node.js](https://github.com/nodejs/node) | 24 | Runtime (pinned via `.nvmrc`) |
 
 ## Architecture
 
-#### Design Principles (Enforced)
+This project enforces nine complementary design principles:
 
-1. **CLEAN Layer Separation** — Code is organized into `domain/`, `app/`, and `ui/` layers with strict unidirectional dependency flow: `domain ← app ← ui`. The `domain` layer contains zero framework imports; `app` bridges domain logic with React hooks; `ui` handles rendering only. This separation means game logic can be tested, reused, or ported to another framework without touching UI code.
+1. **CLEAN Architecture** (Layer Separation)
+   - `domain/` layer: Pure, framework-agnostic logic (zero React dependencies)
+   - `app/` layer: React hooks for state management & side effects
+   - `ui/` layer: Presentational components (atoms → molecules → organisms)
+   - **Benefit**: Domain logic is testable, reusable, and framework-independent
 
-2. **Barrel Exports** — Every directory exposes a single `index.ts` that re-exports its public API. Consumer modules import from `@/domain` instead of `@/domain/board`, reducing import fragility and enabling internal refactors (rename, split, merge files) without propagating changes to every import site.
+2. **Atomic Design** (Component Hierarchy)
+   - Data flows unidirectionally: **Hooks → Organism → Molecules → Atoms**
+   - Organisms contain zero inline markup; all composition happens in JSX
+   - **Benefit**: Components are predictable, composable, and reusable across contexts
 
-3. **Path Aliases (`@/`)** — TypeScript `paths` and Vite `resolve.alias` map `@/domain`, `@/app`, and `@/ui` to their source directories. Imports read as `import { revealCell } from '@/domain'` instead of brittle relative paths like `../../../domain/rules`, improving readability and eliminating path breakage when files move.
+3. **SOLID Principles** (Code-Level Design)
+   - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+   - **Benefit**: Code is maintainable, testable, and resistant to side effects
 
-4. **Import Boundary Enforcement** — `eslint-plugin-boundaries` enforces the CLEAN dependency graph at lint time: `domain` may only import from `domain`; `app` from `domain` + `app`; `ui` from all three; `workers` from `domain` only; `themes` from nothing. Violations fail CI, preventing architectural drift before code reaches review.
+4. **DRY Principle** (No Duplication)
+   - Constants extracted to single sources; reusable hooks eliminate component duplication
+   - **Benefit**: Changes propagate consistently; less code to maintain
 
-5. **React Error Boundaries** — A class-based `ErrorBoundary` wraps the entire component tree, catching render-time exceptions and displaying a styled fallback with a retry button instead of a white screen. This isolates crashes to the boundary scope and lets users recover without a full page reload.
+5. **Import Boundary Enforcement** (`eslint-plugin-boundaries`)
+   - `domain/` → may only import from `domain/` (zero framework deps)
+   - `app/` → may import `domain/` + `app/` (never `ui/`)
+   - `ui/` → may import `domain/`, `app/`, and `ui/` (full downstream access)
+   - `workers/` → may only import `domain/` (pure computation)
+   - `themes/` → may not import anything (pure CSS data)
+   - **Benefit**: CLEAN layer violations are caught at lint time, not at code review
 
-6. **React Context for Dependency Injection** — `ThemeProvider` and `SoundProvider` expose application-wide state (theme settings, sound toggle) via React Context, replacing prop-drilling chains. Components anywhere in the tree call `useThemeContext()` or `useSoundContext()` to read or update shared state without intermediate component coupling.
+6. **Path Aliases** (`@/domain`, `@/app`, `@/ui`)
+   - Configured in `tsconfig.json` (`paths`) and `vite.config.js` (`resolve.alias`)
+   - Eliminates fragile `../../` relative imports across layers
+   - **Benefit**: Imports are self-documenting (`@/domain/rules` vs `../../domain/rules`) and resilient to file moves
 
-7. **CSS Modules** — Component styles are scoped via CSS Modules (`.module.css`), eliminating global class name collisions. Each component's styles are co-located and automatically hashed at build time, ensuring zero style leakage between components.
+7. **Barrel Exports** (`index.ts` per directory)
+   - Each layer exposes a single public API via its barrel file
+   - Internal module structure can change without breaking consumers
+   - **Benefit**: Explicit public APIs; refactoring internals doesn't cascade import changes
 
-8. **Atomic Design (atoms → molecules → organisms)** — UI components follow the Atomic Design hierarchy: `atoms/` (buttons, icons, overlays), `molecules/` (composite widgets), `organisms/` (full page sections). This taxonomy scales predictably — new components slot into the correct level without ambiguity.
+8. **React Error Boundaries** (Crash Isolation)
+   - `ErrorBoundary` component wraps the game at the organism level
+   - Catches render errors and displays a themed fallback UI with a retry button
+   - Prevents a single component crash from taking down the entire app
+   - **Benefit**: Graceful degradation — users see an actionable error, not a white screen
 
-9. **Off-Main-Thread AI** — Hint computation runs in a Web Worker (`ai.worker.ts`), keeping the UI thread responsive during analysis. The worker imports only from `@/domain`, enforced by boundary rules, ensuring it remains a pure computation unit with no DOM or React dependencies.
-
-#### Supporting Patterns
-
-- **Service Worker** — `public/sw.js` caches `offline.html` for offline fallback
-- **PWA Manifest** — `public/manifest.json` enables Add-to-Home-Screen on mobile
-- **Haptic Feedback** — `haptics.ts` wraps the Vibration API for native-feel touch responses
-- **Web Audio SFX** — `sounds.ts` synthesizes click, reveal, explosion, and win sounds entirely in code (zero audio file downloads)
+9. **React Context for Dependency Injection** (ThemeProvider + SoundProvider)
+   - `ThemeProvider` provides theme state to the entire tree via React Context
+   - `SoundProvider` provides sound state + guarded play functions via React Context
+   - Both wired at the root in `index.tsx`: `ThemeProvider > SoundProvider > ErrorBoundary > App`
+   - **Benefit**: Any component can access theme or sound state without prop drilling
 
 ## Device Compatibility
 
-| Platform     | Method                                      | Status    |
-| ------------ | ------------------------------------------- | --------- |
-| Web (modern) | Chrome, Edge, Firefox, Safari 16+           | ✅ Supported |
-| Desktop      | Electron (Windows / macOS / Linux)          | ✅ Supported |
-| Android      | Capacitor → WebView                         | ✅ Supported |
-| iOS          | Capacitor → WKWebView                       | 🔜 Planned  |
-| PWA          | Service Worker + manifest.json              | ✅ Supported |
+| Platform | Native App Tech | Distribution | Input Method | Web | Native App |
+|---|---|---|---|:---:|:---:|
+| **Desktop** | | | | | |
+| Windows | Electron | `.exe` / Microsoft Store | Mouse, keyboard, trackpad | ✅ | ✅ |
+| macOS | Electron | `.dmg` / Mac App Store | Mouse, keyboard, trackpad | ✅ | ✅ |
+| Linux | Electron | `.AppImage` / `.deb` / `.snap` | Mouse, keyboard, trackpad | ✅ | ✅ |
+| **Mobile** | | | | | |
+| Android | Capacitor | Google Play Store / `.apk` | Touch, swipe gestures | ✅ | ✅ |
+| iOS | Capacitor | App Store | Touch, swipe gestures | ✅ | ✅ |
+| **Tablets** | | | | | |
+| iPad | Capacitor (iOS) | App Store | Touch, swipe gestures | ✅ | ✅ |
+| Android tablets | Capacitor (Android) | Google Play Store | Touch, swipe gestures | ✅ | ✅ |
+| Amazon Fire tablets | Capacitor (Android) | Amazon Appstore | Touch, swipe gestures | ✅ | ✅ |
 
 ## Remaining Work
 
