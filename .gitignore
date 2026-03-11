@@ -1,9 +1,42 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 release/
-.vite/
-*.log
+build/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
 .DS_Store
-android/app/build/
-android/build/
-android/capacitor-cordova-android-plugins/build/
+Thumbs.db
+Desktop.ini
+
+# Editor / IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Debug
+coverage/
+
+# Capacitor native projects
+android/
+ios/
+
+# Misc
+*.tgz
+.cache/
