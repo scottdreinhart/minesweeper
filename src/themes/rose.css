@@ -1,5 +1,5 @@
 /* rose theme — CSS custom properties */
-[data-theme="rose"] {
+[data-theme='rose'] {
   --bg: #1a1a2e;
   --text: #eee;
 }

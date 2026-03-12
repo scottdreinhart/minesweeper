@@ -1,10 +1,9 @@
-import type { CapacitorConfig } from '@capacitor/cli'
+import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.scottdreinhart.minesweeper',
+  appId: 'com.scottreinhart.minesweeper',
   appName: 'Minesweeper',
-  webDir: 'dist',
-  server: { androidScheme: 'https' },
-}
+  webDir: 'dist'
+};
 
-export default config
+export default config;

@@ -1,5 +1,5 @@
 /* sunset theme — CSS custom properties */
-[data-theme="sunset"] {
+[data-theme='sunset'] {
   --bg: #1a1a2e;
   --text: #eee;
 }
