@@ -48,7 +48,8 @@
     "cap:run:ios": "pnpm exec cap run ios",
     "wasm:build": "node scripts/build-wasm.js",
     "wasm:build:debug": "node scripts/build-wasm.js --debug",
-    "check:input": "bash scripts/check-input-controls.sh"
+    "check:input": "bash scripts/check-input-controls.sh",
+    "commit": "pnpm exec cz"
   },
   "dependencies": {
     "@capacitor/android": "8.2.0",
@@ -62,13 +63,16 @@
   },
   "devDependencies": {
     "@capacitor/cli": "8.2.0",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "10.0.1",
-    "@vitest/coverage-v8": "4.0.18",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.4",
+    "@vitest/coverage-v8": "4.0.18",
     "assemblyscript": "0.28.10",
+    "commitizen": "^4.3.1",
     "concurrently": "9.2.1",
+    "cz-conventional-changelog": "^3.3.0",
     "electron": "40.8.0",
     "electron-builder": "26.8.1",
     "eslint": "10.0.3",
@@ -77,6 +81,7 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-security": "^4.0.0",
     "kill-port": "2.0.1",
     "prettier": "3.8.1",
     "prettier-plugin-organize-imports": "4.3.0",
@@ -117,5 +122,8 @@
     "linux": {
       "target": "AppImage"
     }
+  },
+  "commitizen": {
+    "path": "cz-conventional-changelog"
   }
 }
