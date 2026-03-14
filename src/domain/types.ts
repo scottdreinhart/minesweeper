@@ -52,9 +52,17 @@ export interface ThemeSettings {
   colorblind: string
 }
 
+export interface GameHistoryEntry {
+  outcome: 'won' | 'lost'
+  difficulty: Difficulty
+  durationSeconds: number
+  timestamp: number
+}
+
 export interface GameStats {
   wins: number
   losses: number
   streak: number
   bestStreak: number
+  history: GameHistoryEntry[]
 }

@@ -1,10 +1,13 @@
 :root {
-  --bg: #1a1a2e;
-  --text: #eee;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  --bg: #06131a;
+  --panel: rgba(7, 26, 35, 0.78);
+  --panel-strong: rgba(4, 19, 26, 0.92);
+  --line: rgba(113, 255, 214, 0.22);
+  --accent: #71ffd6;
+  --accent-warm: #ffc857;
+  --text: #effff9;
+  --muted: #9ec8c0;
+  font-family: 'Segoe UI', 'Trebuchet MS', 'Avenir Next', sans-serif;
 }
 *,
 *::before,
@@ -17,10 +20,562 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100dvh;
+  background-image:
+    radial-gradient(circle at top left, rgba(113, 255, 214, 0.12), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255, 200, 87, 0.1), transparent 28%),
+    linear-gradient(160deg, #06131a 0%, #0a202b 55%, #041017 100%);
 }
 #root {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
+  width: 100%;
+  padding: 1rem;
+}
+
+.ms-shell {
+  width: min(100%, 78rem);
+}
+
+.ms-app {
+  width: 100%;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ms-kicker {
+  color: var(--accent);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.ms-topbar,
+.ms-hud,
+.ms-menu-panel,
+.ms-board-shell,
+.ms-landing-hero,
+.ms-landing-stats,
+.ms-splash-panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+}
+
+.ms-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.5rem;
+}
+
+.ms-topbar h1,
+.ms-landing-hero h1,
+.ms-splash-panel h1 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 0.95;
+}
+
+.ms-hamburger {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.ms-hamburger span {
+  width: 1.1rem;
+  height: 2px;
+  background: currentColor;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.ms-hamburger-open span:nth-child(1) {
+  transform: translateY(0.42rem) rotate(45deg);
+}
+
+.ms-hamburger-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.ms-hamburger-open span:nth-child(3) {
+  transform: translateY(-0.42rem) rotate(-45deg);
+}
+
+.ms-hud {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 1.5rem;
+}
+
+.ms-hud-primary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.ms-hud-brand {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ms-hud-brand h2 {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.ms-hud-hint {
+  max-width: 24rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+.ms-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ms-scorecard,
+.ms-landing-card {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ms-scorecard span,
+.ms-landing-card span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.ms-scorecard strong,
+.ms-landing-card strong {
+  font-size: 1.25rem;
+}
+
+.ms-menu {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.ms-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 20;
+}
+
+.ms-menu-panel {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: min(24rem, calc(100vw - 2rem));
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.4rem;
+  transform: translateY(-0.75rem) scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+  z-index: 31;
+}
+
+.ms-menu-open {
+  pointer-events: auto;
+}
+
+.ms-menu-open .ms-menu-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.ms-menu-section {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.ms-menu-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.ms-menu-scores {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+}
+
+.ms-field {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.875rem;
+}
+
+.ms-field span {
+  color: var(--muted);
+}
+
+.ms-field select,
+button {
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 0.65rem 0.85rem;
+}
+
+.ms-primary-button {
+  background: linear-gradient(135deg, var(--accent), #36c7ff);
+  color: #032330;
+  font-weight: 700;
+}
+
+.ms-board-shell {
+  display: grid;
+  justify-items: center;
+  padding: 1.25rem;
+  border-radius: 1.75rem;
+}
+
+.ms-board {
+  display: grid;
+  gap: 0.22rem;
+  justify-content: start;
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: var(--panel-strong);
+}
+
+.ms-cell {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ms-cell-hidden {
+  background: linear-gradient(180deg, #23404b, #17333d);
+}
+
+.ms-cell-flagged {
+  background: linear-gradient(180deg, #6b4a24, #4b3115);
+}
+
+.ms-cell-revealed {
+  background: #0e1a20;
+}
+
+.ms-cell-hint {
+  outline: 2px solid #7fffd4;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 2px rgba(127, 255, 212, 0.2);
+}
+
+.ms-cell-selected {
+  outline: 2px solid #ffc857;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 2px rgba(255, 200, 87, 0.22);
+}
+
+.ms-cell[data-number='1'] {
+  color: #4ea3ff;
+}
+
+.ms-cell[data-number='2'] {
+  color: #58d26a;
+}
+
+.ms-cell[data-number='3'] {
+  color: #ff7f7f;
+}
+
+.ms-cell[data-number='4'],
+.ms-cell[data-number='5'],
+.ms-cell[data-number='6'],
+.ms-cell[data-number='7'],
+.ms-cell[data-number='8'] {
+  color: #f7d36b;
+}
+
+.ms-landing {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.9fr);
+  gap: 1rem;
+}
+
+.ms-landing-hero,
+.ms-landing-stats {
+  padding: 1.5rem;
+  border-radius: 1.75rem;
+}
+
+.ms-landing-hero {
+  display: grid;
+  gap: 1rem;
+}
+
+.ms-landing-hero p:not(.ms-kicker) {
+  max-width: 40rem;
+  color: var(--muted);
+}
+
+.ms-landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.8rem;
+}
+
+.ms-landing-stats {
+  display: grid;
+  gap: 0.8rem;
+  align-content: start;
+}
+
+.ms-splash {
+  position: relative;
+  overflow: hidden;
+  min-height: min(42rem, calc(100dvh - 2rem));
+  border-radius: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+.ms-splash-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(113, 255, 214, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 255, 214, 0.08) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+  animation: pulse-grid 1.4s ease-in-out infinite alternate;
+}
+
+.ms-splash-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 34rem);
+  padding: 2rem;
+  border-radius: 1.8rem;
+  text-align: center;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ms-splash-copy {
+  color: var(--muted);
+}
+
+.ms-logo {
+  position: relative;
+  width: 7rem;
+  height: 7rem;
+  margin: 0 auto 0.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.ms-logo-core {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 30% 30%, #fff6c8 0%, var(--accent-warm) 48%, #ff7a18 100%);
+  color: #2f1600;
+  font-size: 1.6rem;
+  font-weight: 900;
+  box-shadow: 0 0 22px rgba(255, 200, 87, 0.45);
+  animation: logo-pulse 1.5s ease-in-out infinite;
+}
+
+.ms-logo-orbit {
+  position: absolute;
+  inset: 0.35rem;
+  border: 1px solid rgba(113, 255, 214, 0.28);
+  border-radius: 50%;
+}
+
+.ms-logo-orbit-a {
+  animation: orbit-a 2.4s linear infinite;
+}
+
+.ms-logo-orbit-b {
+  inset: 0.85rem;
+  animation: orbit-b 1.8s linear infinite reverse;
+}
+
+.ms-logo-orbit-c {
+  inset: 1.35rem;
+  animation: orbit-a 1.2s linear infinite;
+}
+
+.ms-scores-screen {
+  display: grid;
+  gap: 1rem;
+}
+
+.ms-scores-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1.5rem;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+}
+
+.ms-history-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ms-history-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ms-history-meta {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: end;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.ms-history-empty {
+  padding: 1.4rem;
+  border: 1px dashed var(--line);
+  border-radius: 1rem;
+  color: var(--muted);
+}
+
+@keyframes pulse-grid {
+  from {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes logo-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes orbit-a {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-b {
+  from {
+    transform: rotate(0deg) scale(1.02);
+  }
+
+  to {
+    transform: rotate(360deg) scale(0.98);
+  }
+}
+
+@media (max-width: 980px) {
+  .ms-scoreboard {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ms-landing {
+    grid-template-columns: 1fr;
+  }
+
+  .ms-scores-header,
+  .ms-history-card {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .ms-history-meta {
+    justify-items: start;
+  }
+}
+
+@media (max-width: 720px) {
+  #root {
+    padding: 0.75rem;
+  }
+
+  .ms-hud-primary {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .ms-hud-hint {
+    text-align: left;
+  }
+
+  .ms-scoreboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ms-board-shell {
+    padding: 0.85rem;
+    overflow-x: auto;
+  }
+
+  .ms-menu-panel {
+    top: 0.75rem;
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
+  }
 }

@@ -1,2 +1,5 @@
-// Barrel export — re-exports all molecules
-export {}
+export { GameBoard } from './GameBoard'
+export { HamburgerMenu } from './HamburgerMenu'
+export { Hud } from './Hud'
+export { LandingPage } from './LandingPage'
+export { ScoresScreen } from './ScoresScreen'

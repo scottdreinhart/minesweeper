@@ -21,8 +21,9 @@ export function placeMines(board: Board, count: number, safeRow: number, safeCol
   const rows = board.length
   const cols = board[0].length
   const clone = board.map((r) => r.map((c) => ({ ...c })))
+  const targetCount = Math.min(count, rows * cols - 1)
   let placed = 0
-  while (placed < count) {
+  while (placed < targetCount) {
     const r = Math.floor(Math.random() * rows)
     const c = Math.floor(Math.random() * cols)
     if (!clone[r][c].mine && !(r === safeRow && c === safeCol)) {

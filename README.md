@@ -17,6 +17,29 @@
 
 A cross-platform Minesweeper game with multiple difficulty levels, 7 color themes, timer, flag counter, and native desktop + mobile builds — powered by React, Vite, Electron, and Capacitor.
 
+## Canonical Rules Baseline
+
+This project follows the standard Minesweeper rules used by mainstream implementations:
+
+- **Objective**: reveal all non-mine cells; revealing a mine ends the game.
+- **Adjacency clues**: each revealed number (`1`–`8`) equals adjacent mines in the 8-neighbor grid.
+- **Zero expansion**: revealing a `0` cell recursively reveals contiguous safe zero regions and bordering numbers.
+- **Flagging**: players can mark suspected mine cells; flags are advisory and do not auto-validate correctness.
+- **Chording**: if a revealed number has an equal count of adjacent flags, opening/chording it reveals all remaining adjacent unflagged hidden cells.
+- **Win condition**: all safe cells are revealed (flags on every mine are not strictly required in many variants).
+
+### Variant Rules Adopted by Implementations
+
+- **First click safety**: many implementations guarantee the first clicked cell is safe.
+- **First click opening**: some implementations additionally guarantee an opening (`0` region) on first click.
+- **No-guess mode**: variant where generated boards are solvable by logic alone.
+
+### Rule Sources
+
+- Wikipedia: *Minesweeper (video game)* and *Microsoft Minesweeper*
+- Strategy references: minesweepergame.com (rules + first-click behavior)
+- Competitive/modern rulesets: minesweeper.online help documentation
+
 **⚠️ PROPRIETARY SOFTWARE — All Rights Reserved**
 
 © 2026 Scott Reinhart. This software is proprietary and confidential.
@@ -142,6 +165,8 @@ pnpm lint:fix       # ESLint — auto-fix issues
 pnpm format         # Prettier — format all source files
 pnpm format:check   # Prettier — check formatting without writing
 pnpm typecheck      # TypeScript type check (tsc --noEmit)
+pnpm test           # Vitest — run unit tests
+pnpm test:watch     # Vitest — watch mode
 
 # Chains
 pnpm check          # lint + format:check + typecheck in one pass (quality gate)
@@ -161,6 +186,7 @@ pnpm validate       # check + build — full pre-push validation
 | [CSS Modules](https://github.com/css-modules/css-modules) | — | Scoped component styling |
 | [ESLint](https://github.com/eslint/eslint) | 10 | Linting (flat config, React + hooks plugins) |
 | [Prettier](https://github.com/prettier/prettier) | 3 | Code formatting |
+| [Vitest](https://github.com/vitest-dev/vitest) | 4 | Unit testing (v8 coverage) |
 | [pnpm](https://github.com/pnpm/pnpm) | 10 | Fast, disk-efficient package manager |
 | [Node.js](https://github.com/nodejs/node) | 24 | Runtime (pinned via `.nvmrc`) |
 
@@ -357,6 +383,29 @@ If you have been granted contributor access:
 4. Submit a pull request with a description of the change
 
 See the [LICENSE](LICENSE) file for usage restrictions.
+
+## Governance Adoption
+
+This project adheres to a standardized governance framework. The governance package includes:
+
+### Security
+- **ESLint Security Rules** — 8 XSS/injection detection rules (`eslint-plugin-security`)
+- Reference: [Security Guidelines](./.github/instructions/10-security.instructions.md)
+
+### Accessibility
+- **WCAG AA Compliance** — 30+ accessibility guidelines
+- Reference: [Accessibility Guidelines](./.github/instructions/09-wcag-accessibility.instructions.md)
+
+### Quality Standards
+- **Error Handling** — ErrorBoundary component for graceful error recovery
+- **Performance Monitoring** — Web Vitals tracking via `usePerformanceMetrics` hook
+- **Mobile Gestures** — Swipe/longpress gesture handlers
+- **Commit Convention** — Commitizen integration for structured commit messages
+
+### See Also
+- Development Build & Deployment: [01-build.instructions.md](./.github/instructions/01-build.instructions.md)
+- Performance Guidelines: [11-performance.instructions.md](./.github/instructions/11-performance.instructions.md)
+- Error Handling Pattern: [12-error-handling.instructions.md](./.github/instructions/12-error-handling.instructions.md)
 
 ## License
 

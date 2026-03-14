@@ -22,4 +22,5 @@ export const DEFAULT_STATS: GameStats = {
   losses: 0,
   streak: 0,
   bestStreak: 0,
+  history: [],
 }

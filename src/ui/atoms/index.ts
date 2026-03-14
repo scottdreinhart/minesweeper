@@ -1,2 +1,5 @@
+export { AnimatedLogo } from './AnimatedLogo'
+export { BoardCell } from './BoardCell'
 export { ErrorBoundary } from './ErrorBoundary'
 export { OfflineIndicator } from './OfflineIndicator'
+export { SplashScreen } from './SplashScreen'
